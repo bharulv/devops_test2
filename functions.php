@@ -101,7 +101,7 @@ function category_tabs_shortcode($atts) {
                     }
                     ?>
                 </div>
-            <?php  ?>
+            <?php endforeach; ?>
         </div>
     </div>
     
