@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      id: checkout
     
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
@@ -14,17 +15,34 @@ jobs:
     
     - name: Check PHP syntax
       run: |
-        set -e  # Exit immediately if any command fails
-        ERROR_FOUND=false
-        
-        # Check each PHP file
-        while IFS= read -r -d '' file; do
-          if ! php -l "$file"; then
-            echo "::error file=$file::PHP syntax error found"
-            ERROR_FOUND=true
-          fi
-        done < <(find . -name '*.php' -not -path './vendor/*' -print0)
-        
-        if $ERROR_FOUND; then
-          exit 1  # This will make the workflow fail
-        fi
+        find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l || exit 1
+    
+    - name: Get commit message
+      id: commit-message
+      run: |
+        MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+        MESSAGE="${MESSAGE//'%'/'%25'}"
+        MESSAGE="${MESSAGE//$'\n'/'%0A'}"
+        MESSAGE="${MESSAGE//$'\r'/'%0D'}"
+        echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+    
+    - name: Notify on failure
+      if: failure()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "PHP Syntax Check Failed in ${{ github.repository }}"
+        to: ${{ secrets.NOTIFICATION_EMAIL }}
+        from: GitHub Actions
+        body: |
+          Commit: ${{ steps.commit-message.outputs.message }}
+          Author: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          Repository: ${{ github.repository }}
+          
+          PHP syntax check failed!
+          
+          View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
