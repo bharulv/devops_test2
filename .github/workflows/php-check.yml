@@ -1,21 +1,11 @@
 name: PHP Syntax Check
-on: 
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   php-lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      id: checkout
-    
-    - name: Disable default notifications
-      if: failure()
-      run: |
-        echo "DISABLE_DEFAULT_NOTIFICATIONS=true" >> $GITHUB_ENV
     
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
@@ -24,39 +14,17 @@ jobs:
     
     - name: Check PHP syntax
       run: |
-        find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l || exit 1
-    
-    - name: Get commit details
-      id: commit-details
-      run: |
-        MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }} | sed ':a;N;$!ba;s/\n/%0A/g')
-        echo "message=$MESSAGE" >> $GITHUB_OUTPUT
-        echo "short_sha=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
-    
-    - name: Custom failure notification
-      if: failure()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "[FAILED] PHP Check: ${{ steps.commit-details.outputs.short_sha }} - ${{ github.event.repository.name }}"
-        to: ${{ secrets.NOTIFICATION_EMAIL }}
-        from: GitHub Actions
-        body: |
-          🚨 PHP Syntax Check Failed
-          
-          Repository: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit SHA: ${{ steps.commit-details.outputs.short_sha }}
-          Author: ${{ github.actor }}
-          
-          Commit Message:
-          ${{ steps.commit-details.outputs.message }}
-          
-          View failed run:
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          
-          View commit:
-          ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        set -e  # Exit immediately if any command fails
+        ERROR_FOUND=false
+        
+        # Check each PHP file
+        while IFS= read -r -d '' file; do
+          if ! php -l "$file"; then
+            echo "::error file=$file::PHP syntax error found"
+            ERROR_FOUND=true
+          fi
+        done < <(find . -name '*.php' -not -path './vendor/*' -print0)
+        
+        if $ERROR_FOUND; then
+          exit 1  # This will make the workflow fail
+        fi
