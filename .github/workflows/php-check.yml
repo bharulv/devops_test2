@@ -1,5 +1,9 @@
 name: PHP Syntax Check
-on: [push, pull_request]
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   php-lint:
@@ -7,6 +11,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       id: checkout
+    
+    - name: Disable default notifications
+      if: failure()
+      run: |
+        echo "DISABLE_DEFAULT_NOTIFICATIONS=true" >> $GITHUB_ENV
     
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
@@ -17,16 +26,14 @@ jobs:
       run: |
         find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l || exit 1
     
-    - name: Get commit message
-      id: commit-message
+    - name: Get commit details
+      id: commit-details
       run: |
-        MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-        MESSAGE="${MESSAGE//'%'/'%25'}"
-        MESSAGE="${MESSAGE//$'\n'/'%0A'}"
-        MESSAGE="${MESSAGE//$'\r'/'%0D'}"
+        MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }} | sed ':a;N;$!ba;s/\n/%0A/g')
         echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+        echo "short_sha=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
     
-    - name: Notify on failure
+    - name: Custom failure notification
       if: failure()
       uses: dawidd6/action-send-mail@v3
       with:
@@ -34,15 +41,22 @@ jobs:
         server_port: 465
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "PHP Syntax Check Failed in ${{ github.repository }}"
+        subject: "[FAILED] PHP Check: ${{ steps.commit-details.outputs.short_sha }} - ${{ github.event.repository.name }}"
         to: ${{ secrets.NOTIFICATION_EMAIL }}
         from: GitHub Actions
         body: |
-          Commit: ${{ steps.commit-message.outputs.message }}
-          Author: ${{ github.actor }}
-          SHA: ${{ github.sha }}
+          🚨 PHP Syntax Check Failed
+          
           Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit SHA: ${{ steps.commit-details.outputs.short_sha }}
+          Author: ${{ github.actor }}
           
-          PHP syntax check failed!
+          Commit Message:
+          ${{ steps.commit-details.outputs.message }}
           
-          View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          View failed run:
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          
+          View commit:
+          ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
