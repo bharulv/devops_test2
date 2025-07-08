@@ -15,23 +15,26 @@ jobs:
     
     - name: Configure Composer Permissions
       run: |
-        # Allow required plugins globally
+        # Allow required plugins
         composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
         composer global config --no-plugins allow-plugins.squizlabs/php_codesniffer true
         
     - name: Install WordPress Coding Standards
       run: |
-        # Clean install avoiding cache issues
-        composer global remove --all
+        # Clear composer cache (fixed version without --all)
         composer global clear-cache
         
-        # Install requirements with platform ignore
-        composer global require --ignore-platform-reqs \
+        # Install requirements
+        composer global require \
           squizlabs/php_codesniffer \
           wp-coding-standards/wpcs \
           dealerdirect/phpcodesniffer-composer-installer \
           phpcsstandards/phpcsextra \
-          phpcsstandards/phpcsutils
+          phpcsstandards/phpcsutils \
+          --ignore-platform-reqs
+        
+        # Configure paths
+        phpcs --config-set installed_paths $(composer global config home)/vendor/wp-coding-standards/wpcs
         
         # Verify installation
         phpcs -i
