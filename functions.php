@@ -20,7 +20,7 @@ if ( !function_exists( 'child_theme_configurator_css' ) ):
         wp_enqueue_script( 'custom-js', trailingslashit( get_stylesheet_directory_uri()) . 'custom.js', array( 'jquery' ), null, true);
     }
 endif;
-add_action( 'wp_enqueue_scripts', 'child_theme_configurator_css', 10 )
+add_action( 'wp_enqueue_scripts', 'child_theme_configurator_css', 10 );
 
 // END ENQUEUE PARENT ACTION
 
@@ -108,4 +108,4 @@ function category_tabs_shortcode($atts) {
     <?php
     return ob_get_clean(); // Return the buffered content
 }
-add_shortcode('category_tabs', 'category_tabs_shortcode');
+add_shortcode('category_tabs', 'category_tabs_shortcode')
