@@ -13,4 +13,16 @@ jobs:
         php-version: '8.2'
     
     - name: Check PHP syntax
-      run: find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
+      run: |
+        set -e  # This makes the script exit immediately on error
+        ERROR_FOUND=false
+        
+        while IFS= read -r -d '' file; do
+          if ! php -l "$file"; then
+            ERROR_FOUND=true
+          fi
+        done < <(find . -name '*.php' -not -path './vendor/*' -print0)
+        
+        if $ERROR_FOUND; then
+          exit 1  # This will make the workflow fail
+        fi
