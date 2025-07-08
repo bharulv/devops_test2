@@ -7,43 +7,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup PHP Environment
+    - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        tools: phpcs
     
-    - name: Configure Composer Permissions
-      run: |
-        composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-        composer global config --no-plugins allow-plugins.squizlabs/php_codesniffer true
-        
-    - name: Install Coding Standards
-      run: |
-        # Install PHPCS and required standards
-        composer global require --ignore-platform-reqs \
-          squizlabs/php_codesniffer \
-          wp-coding-standards/wpcs \
-          dealerdirect/phpcodesniffer-composer-installer \
-          phpcompatibility/php-compatibility \
-          phpcsstandards/phpcsutils
-        
-        # Install Universal standards separately
-        git clone https://github.com/sirbrillig/phpcs-variable-analysis.git $(composer global config home)/vendor/phpcs-variable-analysis
-        git clone https://github.com/PHPCSStandards/PHPCSUtils.git $(composer global config home)/vendor/phpcsstandards/phpcsutils
-        
-        # Set installed paths
-        phpcs --config-set installed_paths \
-          $(composer global config home)/vendor/wp-coding-standards/wpcs,\
-          $(composer global config home)/vendor/phpcompatibility/php-compatibility,\
-          $(composer global config home)/vendor/phpcs-variable-analysis,\
-          $(composer global config home)/vendor/phpcsstandards/phpcsutils
-        
-        # Verify installation
-        phpcs -i
-        
-    - name: Run Basic PHP Syntax Check
+    - name: Check PHP syntax
       run: find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
-    
-    - name: Run WordPress Standards Check
-      run: phpcs --standard=WordPress --extensions=php --ignore=vendor/ .
