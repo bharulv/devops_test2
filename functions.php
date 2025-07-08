@@ -97,7 +97,7 @@ function category_tabs_shortcode($atts) {
                         }
                         echo '</div>';
                     } else {
-                        echo '<p>No posts found in this category.</p>';
+                        echo '<p>No posts found in this category.</p>'
                     }
                     ?>
                 </div>
