@@ -15,9 +15,16 @@ jobs:
     
     - name: Install dependencies
       run: |
+        # Allow required plugins
+        composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+        composer global config --no-plugins allow-plugins.squizlabs/php_codesniffer true
+        
+        # Install dependencies
         composer global require phpcsstandards/phpcsextra
         composer global require phpcsstandards/phpcsutils
-        composer create-project wp-coding-standards/wpcs --no-dev
+        composer create-project wp-coding-standards/wpcs --no-dev --ignore-platform-reqs
+        
+        # Configure paths
         phpcs --config-set installed_paths wpcs,$(composer config --global home)/vendor/phpcsstandards/phpcsextra,$(composer config --global home)/vendor/phpcsstandards/phpcsutils
     
     - name: Run PHP syntax check
