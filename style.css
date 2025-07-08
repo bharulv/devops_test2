@@ -1,0 +1,312 @@
+/*
+Theme Name: Astra Child
+Theme URI: https://wpastra.com/
+Template: astra
+Author: Brainstorm Force
+Author URI: https://wpastra.com/about/?utm_source=theme_preview&utm_medium=author_link&utm_campaign=astra_theme
+Description: The Astra WordPress theme is lightning-fast and highly customizable. It has over 1 million downloads and the only theme in the world with 5,700+ five-star reviews! It's ideal for professional web designers, solopreneurs, small businesses, eCommerce, membership sites and any type of website. It offers special features and templates so it works perfectly with all page builders like Spectra, Elementor, Beaver Builder, etc. Fast performance, clean code, mobile-first design and schema markup are all built-in, making the theme exceptionally SEO-friendly. It's fully compatible with WooCommerce, SureCart and other eCommerce plugins and comes with lots of store-friendly features and templates. Astra also provides expert support for free users. A dedicated team of fully trained WordPress experts are on hand to help with every aspect of the theme. Try the live demo of Astra: https://zipwp.org/themes/astra/
+Tags: custom-menu,custom-logo,entertainment,one-column,two-columns,left-sidebar,e-commerce,right-sidebar,custom-colors,editor-style,featured-images,full-width-template,microformats,post-formats,rtl-language-support,theme-options,threaded-comments,translation-ready,blog
+Version: 4.11.3.1750756316
+Updated: 2025-06-24 09:11:56
+
+*/
+
+/* Custom styles for the category tabs and posts grid */
+
+.category-tabs {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-tabs-content {
+    margin-top: 100px;
+    display: flex;
+}
+.category-tabs-nav {
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    color: #00241a;
+    background-color: #ffff;
+    min-width: fit-content;
+    padding: 5px;
+}
+
+.category-tab-button {
+    padding: 10px 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #00241a;
+    position: relative;
+    margin-right: 5px;
+}
+
+.category-tab-button:hover {
+    color: #00241a;
+    background-color: rgba(0, 0, 0, 0);
+    text-decoration: none !important;
+}
+
+.category-tab-button.active {
+    color: #D29E3D;
+    background-color: #00241a;
+    border-radius: 50px;
+    text-decoration: none !important;
+}
+
+.category-tab-button.active::after {
+    display: none;
+}
+
+.category-tab-pane {
+    display: none;
+}
+
+.category-tab-pane.active {
+    display: block;
+}
+
+.category-posts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    min-height: 300px;
+    align-items: stretch;
+}
+
+/* Flexbox-based post cards */
+.category-post-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 calc(25% - 40px); /* 4 posts per row (25% width minus gap) */
+    min-width: 0;
+    border-radius: 30px;
+    padding-bottom: 50px;
+    overflow: hidden;
+    background: #fff;
+    min-height: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .category-post-card {
+        flex: 1 1 calc(33.333% - 40px); /* 3 posts per row */
+    }
+}
+
+@media (max-width: 900px) {
+    .category-posts-grid {
+        gap: 24px;
+    }
+    .category-post-card {
+        flex: 1 1 calc(50% - 24px); /* 2 posts per row */
+    }
+}
+
+@media (max-width: 600px) {
+    .category-posts-grid {
+        gap: 16px;
+    }
+    .category-post-card {
+        flex: 1 1 100%; /* 1 post per row */
+    }
+}
+
+/* Rest of your existing styles remain the same */
+.post-excerpt {
+    padding: 0 30px 15px;
+    color: #00241a;
+    text-align: center;
+    font-siZe: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.read-more {
+    display: inline-block;
+    padding: 12px 40px;
+    margin-bottom: 20px;
+    background: #fff;
+    color: #00241a;
+    text-decoration: none !important;
+    text-align: center;
+    border: 2px solid #D29E3D;
+    border-radius: 50px;
+    font-family: Figtree, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.4;
+    margin: 8px auto 0 auto;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    letter-spacing: 0.5px;
+}
+
+.read-more:hover {
+    background: #00241a;
+    color: #fff;
+    border-color: #00241a;
+    text-decoration: none !important;
+}
+
+.post-title-wrapper {
+    position: relative;
+    min-height: 300px; 
+    height: 100%;
+    max-height: none;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 4px 4px 0 0;
+}
+
+.post-title-wrapper__center-underline {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 0;
+    height: 4px;
+    background: #D29E3D;
+    border-radius: 2px;
+    z-index: 3;
+}
+
+.post-title-wrapper h3 {
+    color: #fff;
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    font-size: 1.5em;
+}
+
+.post-title-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+    z-index: 1;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Responsive styles for mobile and tablet */
+@media (max-width: 900px) {
+    .category-tabs {
+        padding: 0 8px;
+    }
+    .category-tabs-content {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+    }
+    .category-tabs-nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding: 6px 0;
+        min-width: 0;
+        border-radius: 30px;
+        margin-bottom: 16px;
+        scrollbar-width: thin;
+        scrollbar-color: #D29E3D #f5f5f5;
+    }
+    .category-tabs-nav::-webkit-scrollbar {
+        height: 4px;
+    }
+    .category-tabs-nav::-webkit-scrollbar-thumb {
+        background: #D29E3D;
+        border-radius: 2px;
+    }
+    .category-tabs-nav::-webkit-scrollbar-track {
+        background: #f5f5f5;
+    }
+    .category-tab-button {
+        font-size: 15px;
+        padding: 8px 16px;
+        min-width: 90px;
+        margin-right: 0;
+    }
+    .category-posts-grid {
+        gap: 16px;
+    }
+    .category-post-card {
+        min-height: 180px;
+        padding-bottom: 24px;
+        border-radius: 18px;
+    }
+    .post-title-wrapper {
+        min-height: 220px;
+        padding: 12px;
+        border-radius: 4px 4px 0 0;
+    }
+    .post-title-wrapper h3 {
+        font-size: 1.1em;
+    }
+    .post-excerpt {
+        font-size: 15px;
+        padding: 0 10px 10px;
+    }
+    .read-more {
+        font-size: 15px;
+        padding: 8px 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .category-tabs-content {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+    }
+    .category-tabs-nav {
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 27px;
+        margin-bottom: 12px;
+        max-width: 100vw;
+    }
+    .category-tab-button {
+        font-size: 14px;
+        padding: 7px 12px;
+        min-width: 70px;
+    }
+    .category-posts-grid {
+        gap: 12px;
+    }
+    .category-post-card {
+        min-height: 120px;
+        padding-bottom: 16px;
+        border-radius: 12px;
+    }
+    .post-title-wrapper {
+        min-height: 200px;
+        padding: 8px;
+    }
+    .post-title-wrapper h3 {
+        font-size: 1em;
+    }
+    .post-excerpt {
+        font-size: 14px;
+        padding: 0 6px 8px;
+    }
+    .read-more {
+        font-size: 14px;
+        padding: 7px 12px;
+    }
+}
