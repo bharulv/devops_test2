@@ -7,27 +7,37 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup PHP
+    - name: Setup PHP Environment
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
         tools: phpcs
     
-    - name: Install WordPress Standards
+    - name: Configure Composer Permissions
       run: |
-        # Install required packages
-        composer global require squizlabs/php_codesniffer
-        composer global require wp-coding-standards/wpcs
-        composer global require dealerdirect/phpcodesniffer-composer-installer
+        # Allow required plugins globally
+        composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+        composer global config --no-plugins allow-plugins.squizlabs/php_codesniffer true
         
-        # Set installed paths
-        phpcs --config-set installed_paths $(composer global config home)/vendor/wp-coding-standards/wpcs
+    - name: Install WordPress Coding Standards
+      run: |
+        # Clean install avoiding cache issues
+        composer global remove --all
+        composer global clear-cache
+        
+        # Install requirements with platform ignore
+        composer global require --ignore-platform-reqs \
+          squizlabs/php_codesniffer \
+          wp-coding-standards/wpcs \
+          dealerdirect/phpcodesniffer-composer-installer \
+          phpcsstandards/phpcsextra \
+          phpcsstandards/phpcsutils
         
         # Verify installation
         phpcs -i
         
-    - name: Basic PHP Syntax Check
+    - name: Run Basic PHP Syntax Check
       run: find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
     
-    - name: WordPress Standards Check
+    - name: Run WordPress Standards Check
       run: phpcs --standard=WordPress --extensions=php --ignore=vendor/ .
