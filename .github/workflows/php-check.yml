@@ -13,12 +13,15 @@ jobs:
         php-version: '8.2'
         tools: phpcs
     
-    - name: Install WordPress Coding Standards
+    - name: Install dependencies
       run: |
+        composer global require phpcsstandards/phpcsextra
+        composer global require phpcsstandards/phpcsutils
         composer create-project wp-coding-standards/wpcs --no-dev
-        phpcs --config-set installed_paths wpcs
-        
-    - name: Check PHP syntax
-      run: |
-        find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
-        phpcs --standard=WordPress --extensions=php --ignore=vendor/ .
+        phpcs --config-set installed_paths wpcs,$(composer config --global home)/vendor/phpcsstandards/phpcsextra,$(composer config --global home)/vendor/phpcsstandards/phpcsutils
+    
+    - name: Run PHP syntax check
+      run: find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
+    
+    - name: Run WordPress standards check
+      run: phpcs --standard=WordPress --extensions=php --ignore=vendor/ .
