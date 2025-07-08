@@ -13,6 +13,11 @@ jobs:
         php-version: '8.2'
         tools: phpcs
     
+    - name: Install WordPress Coding Standards
+      run: |
+        composer create-project wp-coding-standards/wpcs --no-dev
+        phpcs --config-set installed_paths wpcs
+        
     - name: Check PHP syntax
       run: |
         find . -name '*.php' -not -path './vendor/*' -exec php -l {} \;
