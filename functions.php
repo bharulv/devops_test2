@@ -108,4 +108,4 @@ function category_tabs_shortcode($atts) {
     <?php
     return ob_get_clean(); // Return the buffered content
 }
-add_shortcode('category_tabs', 'category_tabs_shortcode');
+add_shortcode('category_tabs', 'category_tabs_shortcode')
